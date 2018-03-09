@@ -119,7 +119,7 @@ def import_json(request):
     net = {}
     # Add dummy input layer if sequential model
     if (isinstance(model, Sequential)):
-        input_layer = model.layers[0].inbound_nodes[0].inbound_layers[0]
+        input_layer = model.layers[0]._inbound_nodes[0].inbound_layers[0]
         # If embedding is the first layer, the input has shape (None, None)
         if (model.layers[0].__class__.__name__ == 'Embedding'):
             input_layer.batch_input_shape = (None, model.layers[0].input_dim)
@@ -134,8 +134,8 @@ def import_json(request):
             if class_name == 'InputLayer':
                 found = 0
                 for find_layer in model.layers:
-                    if len(find_layer.inbound_nodes[0].inbound_layers):
-                        if find_layer.inbound_nodes[0].inbound_layers[0].__class__.__name__ == 'InputLayer':
+                    if len(find_layer._inbound_nodes[0].inbound_layers):
+                        if find_layer._inbound_nodes[0].inbound_layers[0].__class__.__name__ == 'InputLayer':
                             net[layer.name] = Input(layer)
                             if find_layer.__class__.__name__ in ['Bidirectional', 'TimeDistributed']:
                                 net[layer.name]['connection']['output'] = [
@@ -175,7 +175,7 @@ def import_json(request):
                     net[name]['connection']['output'] = [
                         model.layers[idx + 1].name]
                     model.layers[idx +
-                                 1].inbound_nodes[0].inbound_layers = [new_layer]
+                                 1]._inbound_nodes[0].inbound_layers = [new_layer]
                 else:
                     net[name]['connection']['output'] = []
                 wrapped = True
@@ -197,8 +197,8 @@ def import_json(request):
             else:
                 net[layer.name] = layer_map[class_name](layer)
                 name = layer.name
-            if (layer.inbound_nodes[0].inbound_layers) and not wrapped:
-                for node in layer.inbound_nodes[0].inbound_layers:
+            if (layer._inbound_nodes[0].inbound_layers) and not wrapped:
+                for node in layer._inbound_nodes[0].inbound_layers:
                     net[node.name]['connection']['output'].append(name)
         else:
             return JsonResponse({'result': 'error',

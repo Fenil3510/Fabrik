@@ -37,7 +37,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'caffe_app.apps.CaffeAppConfig',
     'keras_app.apps.KerasAppConfig',
     'tensorflow_app.apps.TensorflowAppConfig',
     'django.contrib.admin',

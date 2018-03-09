@@ -47,7 +47,7 @@ def Activation(layer):
         return jsonLayer(activationMap[layer.activation.func_name], {}, layer)
     else:
         tempLayer = {}
-        tempLayer['inbound_nodes'] = [
+        tempLayer['_inbound_nodes'] = [
             [[layer.name + layer.__class__.__name__]]]
         return jsonLayer(activationMap[layer.activation.func_name], {}, tempLayer)
 
@@ -462,7 +462,7 @@ def Scale(layer):
         params['beta_constraint'] = layer.beta_constraint.__class__.__name__
     if (layer.gamma_constraint):
         params['gamma_constraint'] = layer.gamma_constraint.__class__.__name__
-    tempLayer['inbound_nodes'] = [[[layer.name + layer.__class__.__name__]]]
+    tempLayer['_inbound_nodes'] = [[[layer.name + layer.__class__.__name__]]]
     return jsonLayer('Scale', params, tempLayer)
 
 
@@ -521,10 +521,10 @@ def jsonLayer(type, params, layer):
         input.append(layer.wrapper[0])
     else:
         if isinstance(layer, dict):
-            for node in layer['inbound_nodes'][0]:
+            for node in layer['_inbound_nodes'][0]:
                 input.append(node[0])
-        elif (len(layer.inbound_nodes[0].inbound_layers)):
-            for node in layer.inbound_nodes[0].inbound_layers:
+        elif (len(layer._inbound_nodes[0].inbound_layers)):
+            for node in layer._inbound_nodes[0].inbound_layers:
                 input.append(node.name)
     layer = {
         'info': {
